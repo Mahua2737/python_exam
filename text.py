@@ -10,27 +10,36 @@ import string
 import nltk
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 
+nltk.download("punkt")
+nltk.download("stopwords")
+
 
 def text_analysis(data):
     stop_words = set(stopwords.words("english"))
     ps = PorterStemmer()
 
     def preprocess_text(text):
-        tokens = word_tokenize(text.lower())
-        tokens = [
-            word
-            for word in tokens
-            if word not in stop_words and word not in string.punctuation
-        ]
-        tokens = [ps.stem(word) for word in tokens]
-        return " ".join(tokens)
+        if isinstance(text, str) and text.strip():
+            tokens = word_tokenize(text.lower())
+            tokens = [
+                word
+                for word in tokens
+                if word not in stop_words and word not in string.punctuation
+            ]
+            tokens = [ps.stem(word) for word in tokens]
+            return " ".join(tokens)
+        else:
+            return ""
 
     data["Preprocessed Text"] = data["Review Text"].apply(preprocess_text)
 
     def text_similarity(text1, text2):
-        vectorizer = CountVectorizer().fit_transform([text1, text2])
-        vectors = vectorizer.toarray()
-        return cosine_similarity(vectors)[0, 1]
+        if text1 and text2:
+            vectorizer = CountVectorizer().fit_transform([text1, text2])
+            vectors = vectorizer.toarray()
+            return cosine_similarity(vectors)[0, 1]
+        else:
+            return 0.0
 
     similar_reviews = {}
 
