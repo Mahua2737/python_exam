@@ -8,10 +8,10 @@ from image_processing import process_image
 from text import text_analysis
 
 
-@st.cache
+@st.cache_data
 def load_data():
     data = pd.read_csv("WomensClothingE-CommerceReviews.csv")
-    return data
+    return data.copy()
 
 
 data = load_data()
